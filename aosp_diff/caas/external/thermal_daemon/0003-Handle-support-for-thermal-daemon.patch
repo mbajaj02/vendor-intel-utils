@@ -1,0 +1,33 @@
+From 46fb826d7aa75c9616ca6a5814b3695435b7bff8 Mon Sep 17 00:00:00 2001
+From: Manvi Bajaj <manvi.bajaj@intel.com>
+Date: Fri, 31 Jan 2025 10:35:00 +0000
+Subject: [PATCH] Handle support for thermal-daemon
+
+This patch will handle whether thermal-daemon service is
+supported by a target.
+
+Signed-off-by: Manvi Bajaj <manvi.bajaj@intel.com>
+---
+ src/thd_engine_default.cpp | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/thd_engine_default.cpp b/src/thd_engine_default.cpp
+index 5040462..b293b12 100644
+--- a/src/thd_engine_default.cpp
++++ b/src/thd_engine_default.cpp
+@@ -747,9 +747,10 @@ int thd_engine_create_default_engine(bool ignore_cpuid_check,
+ 		thd_engine->set_config_file(conf_file);
+ 
+ 	if (thd_engine->thd_engine_start(ignore_cpuid_check) != THD_SUCCESS) {
+-		thd_log_error("THD engine start failed\n");
++		property_set("persist.vendor.thermal.daemon.supported", "0");
++		thd_log_error("Thermal Daemon not supported\n");
+ 		return THD_ERROR;
+ 	}
+-
++	property_set("persist.vendor.thermal.daemon.supported", "1");
+ 	return THD_SUCCESS;
+ }
+-- 
+2.34.1
+
